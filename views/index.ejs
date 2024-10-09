@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Stereogram Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        'primary-light': '#818CF8',
+                        'primary-dark': '#3730A3',
+                        secondary: '#10B981',
+                        'secondary-light': '#34D399',
+                        'secondary-dark': '#059669',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="container max-w-6xl">
+        <div class="card p-8 relative">
+            <div class="absolute top-0 right-0 mt-4 mr-4 text-sm text-gray-500">
+                Powered by AI
+            </div>
+            <h1 class="text-4xl font-bold mb-8 text-center text-gray-800">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                    Enhanced Stereogram Generator
+                </span>
+            </h1>
+            
+            <div class="info-box mb-8">
+                <h2>How it works</h2>
+                <p>Our stereogram generator uses a fixed separation of 170 pixels and a depth strength of 25% to create optimal 3D effects. These settings have been carefully chosen to provide the best viewing experience for most users.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Left Column - Generator Settings -->
+                <div>
+                    <h3 class="section-title">Generator Settings</h3>
+                    <div class="upload-section">
+                        <h2 class="upload-title">Select Depth Image</h2>
+                        
+                        <!-- File Upload Field -->
+                        <div class="upload-field">
+                            <label for="depthImage" class="upload-label">Upload Custom Depth Image:</label>
+                            <input type="file" id="depthImage" name="depthImage" class="upload-input">
+                        </div>
+                    
+                        <!-- Depth Image Grid -->
+                        <div class="mt-4">
+                            <h3 class="text-lg font-semibold mb-2">Or Choose from Library:</h3>
+                            <div id="depthImageGrid" class="template-grid">
+                                <!-- Depth images will be populated here by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <p class="upload-instructions mt-4">Supported file types: .png, .jpg. For best results, use grayscale images where white represents the closest points and black represents the farthest points.</p>
+                    </div>
+
+                    <div class="upload-section mb-6">
+                        <h2 class="upload-title">Select Template Image:</h2>
+                        <div id="templateGrid" class="template-grid">
+                            <!-- Templates will be populated here by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button id="generateBtn" class="btn btn-generate btn-large w-full">
+                            <span class="btn-content">
+                                <span>Generate Stereogram</span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="mt-4">
+                        <button id="downloadBtn" class="btn btn-download w-full hidden">
+                            <span class="btn-content">
+                                <span>Download Stereogram</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column - Previews -->
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="section-title">Depth Image Preview</h3>
+                        <div id="depthPreviewContainer" class="preview-container hidden">
+                            <img id="depthPreview" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="section-title">Template Preview</h3>
+                        <div id="previewContainer" class="preview-container hidden">
+                            <div id="templatePreview" class="template-preview-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="stereogramPreviewContainer" class="mt-8 hidden fade-in">
+                <h3 class="section-title">Stereogram Preview</h3>
+                <div class="preview-container flex justify-center items-center">
+                    <img id="stereogramPreview" src="" alt="Stereogram Preview" class="max-w-full max-h-full object-contain">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
