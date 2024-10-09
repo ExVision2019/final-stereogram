@@ -3,44 +3,27 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { createCanvas, loadImage } = require('canvas');
-const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Directories for static files
 const templatesDir = path.join(__dirname, 'public', 'templates');
 const depthImagesDir = path.join(__dirname, 'public', 'depth-images');
 
-// Add this before other middleware
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
-}));
-
 // Middleware setup
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
 app.use(express.static('public'));
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Temporary upload storage for user-uploaded depth images
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, 'temp'));
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+// Use memory storage instead of disk storage
+const storage = multer.memoryStorage();
+const upload = multer({ 
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
     }
 });
-
-const upload = multer({ storage: storage });
 
 // Routes
 app.get('/', (req, res) => {
@@ -72,23 +55,22 @@ app.get('/api/depth-images', (req, res) => {
 app.post('/generate-stereogram', upload.single('depthImage'), async (req, res) => {
     try {
         const { separation, depthStrength, templateId, depthImageId } = req.body;
-        let depthImagePath;
+        let depthImage;
 
         // Handle both uploaded file and selected depth image cases
         if (req.file) {
-            depthImagePath = req.file.path;
+            // For uploaded files, load directly from buffer
+            const buffer = req.file.buffer;
+            depthImage = await loadImage(buffer);
         } else if (depthImageId) {
             const depthImages = fs.readdirSync(depthImagesDir)
                 .filter(file => file.match(/\.(png|jpg|jpeg)$/i));
             const filename = depthImages[parseInt(depthImageId) - 1];
-            depthImagePath = path.join(depthImagesDir, filename);
+            depthImage = await loadImage(path.join(depthImagesDir, filename));
         } else {
             throw new Error('No depth image provided');
         }
 
-        // Load the depth image
-        const depthImage = await loadImage(depthImagePath);
-        
         // Get template image
         const templates = fs.readdirSync(templatesDir)
             .filter(file => file.match(/\.(png|jpg|jpeg)$/i));
@@ -97,13 +79,6 @@ app.post('/generate-stereogram', upload.single('depthImage'), async (req, res) =
 
         // Generate stereogram
         const stereogram = createStereogram(depthImage, parseInt(separation), parseInt(depthStrength), templateImage);
-
-        // Clean up temporary file if it was an upload
-        if (req.file) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) console.error('Error deleting temporary file:', err);
-            });
-        }
 
         // Send the generated stereogram
         res.set('Content-Type', 'image/png');
@@ -114,7 +89,7 @@ app.post('/generate-stereogram', upload.single('depthImage'), async (req, res) =
     }
 });
 
-// Stereogram generation functions
+// Stereogram generation functions remain the same
 function createPattern(width, height, templateImage) {
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
@@ -186,6 +161,12 @@ function createStereogram(depth, separation, depthStrength, templateImage) {
     ctx.putImageData(imageData, 0, 0);
     return canvas;
 }
+
+// Add error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something broke!' });
+});
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
