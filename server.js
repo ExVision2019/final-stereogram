@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { createCanvas, loadImage } = require('canvas');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
@@ -11,8 +12,21 @@ const port = 3000;
 const templatesDir = path.join(__dirname, 'public', 'templates');
 const depthImagesDir = path.join(__dirname, 'public', 'depth-images');
 
+// Add this before other middleware
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
+
 // Middleware setup
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 app.use(express.static('public'));
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
