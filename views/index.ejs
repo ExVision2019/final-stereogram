@@ -25,72 +25,67 @@
     </script>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="container max-w-6xl">
+    <div class="container max-w-6xl mx-auto">
         <div class="card p-8 relative">
             <div class="absolute top-0 right-0 mt-4 mr-4 text-sm text-gray-500">
                 Powered by AI
             </div>
-            <h1 class="text-4xl font-bold mb-8 text-center text-gray-800">
+            
+            <h1 class="text-3xl md:text-4xl font-bold mb-4 md:mb-8 text-center text-gray-800">
                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                     Enhanced Stereogram Generator
                 </span>
             </h1>
             
-            <div class="info-box mb-8">
+            <div class="info-box">
                 <h2>How it works</h2>
                 <p>Our stereogram generator uses a fixed separation of 170 pixels and a depth strength of 25% to create optimal 3D effects. These settings have been carefully chosen to provide the best viewing experience for most users.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Left Column - Generator Settings -->
-                <div>
+            <div class="grid-container grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Generator Settings -->
+                <div class="settings-section">
                     <h3 class="section-title">Generator Settings</h3>
+                    
                     <div class="upload-section">
                         <h2 class="upload-title">Select Depth Image</h2>
-                        
-                        <!-- File Upload Field -->
                         <div class="upload-field">
                             <label for="depthImage" class="upload-label">Upload Custom Depth Image:</label>
                             <input type="file" id="depthImage" name="depthImage" class="upload-input">
                         </div>
-                    
-                        <!-- Depth Image Grid -->
+                        
                         <div class="mt-4">
                             <h3 class="text-lg font-semibold mb-2">Or Choose from Library:</h3>
                             <div id="depthImageGrid" class="template-grid">
-                                <!-- Depth images will be populated here by JavaScript -->
+                                <!-- Depth images populated by JavaScript -->
                             </div>
                         </div>
                         
-                        <p class="upload-instructions mt-4">Supported file types: .png, .jpg. For best results, use grayscale images where white represents the closest points and black represents the farthest points.</p>
+                        <p class="upload-instructions mt-4">Supported file types: .png, .jpg. For best results, use grayscale images.</p>
                     </div>
 
-                    <div class="upload-section mb-6">
+                    <div class="upload-section">
                         <h2 class="upload-title">Select Template Image:</h2>
                         <div id="templateGrid" class="template-grid">
-                            <!-- Templates will be populated here by JavaScript -->
+                            <!-- Templates populated by JavaScript -->
                         </div>
                     </div>
 
-                    <div class="mt-8">
-                        <button id="generateBtn" class="btn btn-generate btn-large w-full">
-                            <span class="btn-content">
-                                <span>Generate Stereogram</span>
-                            </span>
+                    <div class="mt-6">
+                        <button id="generateBtn" class="btn btn-generate w-full">
+                            Generate Stereogram
                         </button>
                     </div>
 
                     <div class="mt-4">
                         <button id="downloadBtn" class="btn btn-download w-full hidden">
-                            <span class="btn-content">
-                                <span>Download Stereogram</span>
-                            </span>
+                            Download Stereogram
                         </button>
                     </div>
                 </div>
 
-                <!-- Right Column - Previews -->
-                <div class="space-y-8">
+                <!-- Previews - Hidden on Mobile -->
+                <div class="preview-section">
                     <div>
                         <h3 class="section-title">Depth Image Preview</h3>
                         <div id="depthPreviewContainer" class="preview-container hidden">
@@ -98,7 +93,7 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="mt-8">
                         <h3 class="section-title">Template Preview</h3>
                         <div id="previewContainer" class="preview-container hidden">
                             <div id="templatePreview" class="template-preview-grid"></div>
@@ -107,6 +102,7 @@
                 </div>
             </div>
 
+            <!-- Stereogram Preview - Visible on All Devices -->
             <div id="stereogramPreviewContainer" class="mt-8 hidden fade-in">
                 <h3 class="section-title">Stereogram Preview</h3>
                 <div class="preview-container flex justify-center items-center">
